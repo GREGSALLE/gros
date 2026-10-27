@@ -27,7 +27,8 @@ export default function RootLayout() {
           contentStyle: { backgroundColor: colors.ink },
         }}>
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="credencial" options={{ title: 'Credencial', headerBackVisible: false }} />
+        <Stack.Screen name="credencial" options={{ title: 'Umbra', headerBackVisible: false }} />
+        <Stack.Screen name="perfil" options={{ title: 'Perfil' }} />
         <Stack.Screen name="creditos" options={{ title: 'Créditos' }} />
       </Stack>
     </SessionProvider>

@@ -10,6 +10,8 @@ export type User = {
   lastname: string;
   email: string;
   pfpUrl: string;
+  credits: number;
+  xp: number;
   fullName: string;
 };
 
@@ -19,7 +21,11 @@ type LoginResponse = {
   email?: string;
   firstname?: string;
   lastname?: string;
+  first_name?: string;
+  last_name?: string;
   pfp_url?: string;
+  credits?: number;
+  xp?: number;
   error?: string;
 };
 
@@ -42,8 +48,8 @@ export async function login(username: string, password: string): Promise<User> {
     throw new LoginError(data.error ?? 'Usuario o contraseña incorrectos.');
   }
 
-  const firstname = data.firstname ?? '';
-  const lastname = data.lastname ?? '';
+  const firstname = data.firstname ?? data.first_name ?? '';
+  const lastname = data.lastname ?? data.last_name ?? '';
   return {
     id,
     username: data.username,
@@ -51,6 +57,8 @@ export async function login(username: string, password: string): Promise<User> {
     lastname,
     email: data.email ?? '',
     pfpUrl: data.pfp_url ?? '',
+    credits: Number(data.credits ?? 0),
+    xp: Number(data.xp ?? 0),
     fullName: `${firstname} ${lastname}`.trim() || data.username,
   };
 }

@@ -10,6 +10,8 @@ import {
   setUserId,
   type NfcStatus,
 } from '../../modules/umbra-hce/src';
+import { Icon } from '../components/Icon';
+import { icons } from '../lib/icons';
 import { useSession } from '../lib/session';
 import { colors, fonts } from '../lib/theme';
 
@@ -57,19 +59,30 @@ export default function CredencialScreen() {
   };
 
   const showPhoto = user.pfpUrl !== '' && !imageFailed;
+  const displayName = user.firstname.trim() !== '' ? user.firstname : user.username;
 
   return (
     <>
       <Stack.Screen
         options={{
           headerRight: () => (
-            <Pressable onPress={onLogout} hitSlop={12} accessibilityLabel="Cerrar sesión">
-              <Text style={styles.logout}>Salir</Text>
-            </Pressable>
+            <View style={styles.headerActions}>
+              <Pressable onPress={() => router.push('/perfil')} hitSlop={10} accessibilityLabel="Perfil de usuario">
+                <Icon path={icons.accountCircle} color={colors.alarm} size={26} />
+              </Pressable>
+              <Pressable onPress={onLogout} hitSlop={10} accessibilityLabel="Cerrar sesión">
+                <Icon path={icons.logout} color={colors.alarm} size={26} />
+              </Pressable>
+            </View>
           ),
         }}
       />
       <ScrollView contentContainerStyle={styles.content}>
+        {/* --- Bienvenida (como en Umbra) --- */}
+        <Text style={styles.welcome}>¡Bienvenido, {displayName}!</Text>
+        <View style={styles.rule} />
+        <Text style={styles.subtitle}>Esta es tu credencial de acceso.</Text>
+
         {/* --- Tarjeta de credencial --- */}
         <View style={[styles.card, { borderColor: detected ? colors.signal : colors.alarmDim }]}>
           {showPhoto ? (
@@ -85,7 +98,7 @@ export default function CredencialScreen() {
             </View>
           )}
           <Text style={styles.name}>{user.fullName}</Text>
-          <View style={styles.rule} />
+          <View style={styles.cardRule} />
           <Text style={styles.idLabel}>NÚMERO DE USUARIO</Text>
           <Text style={styles.id}>{user.id}</Text>
         </View>
@@ -94,6 +107,7 @@ export default function CredencialScreen() {
         <NfcStatusRow status={nfcStatus} detected={detected} />
 
         <Pressable style={styles.creditsButton} onPress={() => router.push('/creditos')}>
+          <Icon path={icons.accountGroup} color={colors.alarm} size={22} />
           <Text style={styles.creditsText}>Créditos</Text>
         </Pressable>
       </ScrollView>
@@ -104,6 +118,7 @@ export default function CredencialScreen() {
 function NfcStatusRow({ status, detected }: { status: NfcStatus; detected: boolean }) {
   let text = 'Acerca el teléfono al lector.';
   let color: string = colors.fog;
+  let path: string = icons.nfc;
 
   if (!isHceAvailable) {
     text = 'Falta el módulo NFC: usa la development build (no Expo Go).';
@@ -115,13 +130,17 @@ function NfcStatusRow({ status, detected }: { status: NfcStatus; detected: boole
     text = 'El NFC está desactivado.';
     color = colors.amber;
   } else if (detected) {
-    text = '✓ Lector detectado';
+    text = 'Lector detectado';
     color = colors.signal;
+    path = icons.checkCircle;
   }
 
   return (
     <View style={styles.statusWrap}>
-      <Text style={[styles.statusText, { color }]}>{text}</Text>
+      <View style={styles.statusRow}>
+        <Icon path={path} color={color} size={26} />
+        <Text style={[styles.statusText, { color }]}>{text}</Text>
+      </View>
       {isHceAvailable && status === 'disabled' ? (
         <Pressable style={styles.settingsButton} onPress={openNfcSettings}>
           <Text style={styles.settingsText}>Abrir ajustes de NFC</Text>
@@ -132,32 +151,36 @@ function NfcStatusRow({ status, detected }: { status: NfcStatus; detected: boole
 }
 
 const styles = StyleSheet.create({
-  content: { padding: 24, alignItems: 'stretch' },
-  logout: { color: colors.alarm, fontSize: 16, fontWeight: '600' },
+  content: { paddingHorizontal: 24, paddingVertical: 12, alignItems: 'stretch' },
+  headerActions: { flexDirection: 'row', alignItems: 'center', gap: 18 },
+  welcome: { color: colors.bone, fontFamily: fonts.title, fontSize: 28, lineHeight: 34 },
+  rule: { marginTop: 14, width: 28, height: 3, backgroundColor: colors.alarm },
+  subtitle: { marginTop: 12, marginBottom: 20, color: colors.fog, fontFamily: fonts.italic, fontSize: 17 },
   card: {
     backgroundColor: colors.panel,
     borderRadius: 24,
     borderWidth: 2,
-    paddingVertical: 32,
+    paddingVertical: 28,
     paddingHorizontal: 20,
     alignItems: 'center',
   },
-  photo: { width: 160, height: 160, borderRadius: 80 },
+  photo: { width: 150, height: 150, borderRadius: 75 },
   photoFallback: { backgroundColor: colors.alarmDim, alignItems: 'center', justifyContent: 'center' },
-  initial: { color: colors.bone, fontFamily: fonts.title, fontSize: 64 },
+  initial: { color: colors.bone, fontFamily: fonts.title, fontSize: 60 },
   name: {
-    marginTop: 24,
+    marginTop: 22,
     color: colors.bone,
     fontFamily: fonts.title,
     fontSize: 32,
     lineHeight: 38,
     textAlign: 'center',
   },
-  rule: { marginTop: 20, width: 28, height: 3, backgroundColor: colors.alarm },
-  idLabel: { marginTop: 20, color: colors.fog, fontSize: 13, letterSpacing: 1 },
+  cardRule: { marginTop: 18, width: 28, height: 3, backgroundColor: colors.alarm },
+  idLabel: { marginTop: 18, color: colors.fog, fontSize: 13, letterSpacing: 1 },
   id: { marginTop: 4, color: colors.alarm, fontFamily: fonts.title, fontSize: 44, lineHeight: 50 },
   statusWrap: { marginTop: 24, alignItems: 'center' },
-  statusText: { fontSize: 17, textAlign: 'center' },
+  statusRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  statusText: { fontSize: 17, textAlign: 'center', flexShrink: 1 },
   settingsButton: {
     marginTop: 12,
     backgroundColor: colors.alarm,
@@ -167,12 +190,16 @@ const styles = StyleSheet.create({
   },
   settingsText: { color: colors.bone, fontWeight: '600' },
   creditsButton: {
-    marginTop: 32,
+    marginTop: 28,
+    marginBottom: 24,
     borderWidth: 1,
     borderColor: colors.alarm,
     borderRadius: 24,
     paddingVertical: 14,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
   },
   creditsText: { color: colors.bone, fontSize: 16, fontWeight: '600' },
 });

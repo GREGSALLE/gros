@@ -1,7 +1,7 @@
 import type { ImageSourcePropType } from 'react-native';
 
 // ---- Datos de la pantalla de créditos (editar aquí) ----
-export const GRUPO = 'Grupo POR_DEFINIR';
+export const GRUPO = 'Grupo GIGN';
 export const FECHA = 'Octubre 2026';
 
 export type Member = { fullName: string; role: string; avatar: ImageSourcePropType };
