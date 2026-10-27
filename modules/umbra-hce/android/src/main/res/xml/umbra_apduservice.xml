@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- AID del sistema de acceso: F0 12 34 56 78. Es el mismo que manda el lector
+     (firmware Reader/ScannerHTTP) en su SELECT y que HceConfig.AID_HEX. -->
+<host-apdu-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/umbra_hce_description"
+    android:requireDeviceUnlock="true">
+    <aid-group
+        android:category="other"
+        android:description="@string/umbra_hce_aid_group">
+        <aid-filter android:name="F012345678" />
+    </aid-group>
+</host-apdu-service>

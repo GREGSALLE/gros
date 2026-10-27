@@ -1,0 +1,4 @@
+<resources>
+    <string name="umbra_hce_description">Credencial de acceso Umbra</string>
+    <string name="umbra_hce_aid_group">Acceso físico Umbra</string>
+</resources>
